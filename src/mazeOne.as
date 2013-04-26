@@ -6,6 +6,8 @@ package
 	 * @version 1.0.0
 	 * 创建时间：2013-4-25 上午10:55:33
 	 * */
+	import com.demonsters.debugger.MonsterDebugger;
+	
 	import flash.display.Bitmap;
 	import flash.display.BitmapData;
 	import flash.display.Shape;
@@ -13,6 +15,8 @@ package
 	import flash.display.StageScaleMode;
 	import flash.events.MouseEvent;
 	import flash.geom.Point;
+	import flash.text.TextField;
+	import flash.text.TextFormat;
 	import flash.utils.setInterval;
 	import flash.utils.setTimeout;
 
@@ -36,10 +40,12 @@ package
 		public var start:Point;
 		public var end:Point;
 		public var pathShape:Shape = new Shape();
+		private var txt:TextField=new TextField();
 
 		public function mazeOne()
 		{
 			stage.scaleMode = StageScaleMode.NO_SCALE;
+			MonsterDebugger.initialize(this);
 			bitmap.scaleX = bitmap.scaleY = MAZE_SCALE;
 			bitmap.x = bitmap.y = 0;
 			x = bitmap.width - stage.stageWidth * 0.5;
@@ -50,7 +56,16 @@ package
 			pathShape.x = pathShape.y = MAZE_SCALE * 0.5;
 			addChild(pathShape);
 //			setInterval(test,100,1,2);
-			generateMaze();
+			
+			var format:TextFormat=new TextFormat();
+			format.size=20;
+			txt.defaultTextFormat=format;
+			txt.text="绘制中……";
+			
+			this.addChild(txt);
+			setTimeout(generateMaze,2000);
+//			setInterval(generateMaze,2000);
+			
 			stage.addEventListener(MouseEvent.CLICK, onClick);
 		}
 
@@ -106,6 +121,8 @@ package
 		private var xStack:Array = [];
 		private var yStack:Array = [];
 
+		
+		
 		private function generateMaze():void
 		{
 
@@ -123,6 +140,8 @@ package
 				x = xStack[xStack.length - 1];
 				y = yStack[yStack.length - 1];
 				sides.length = 0;
+				
+				/**  judge can through side.	Use 2 steps is necessary.	 Because just one step may be can't move next. */
 				if (getTile(x + 2, y))
 				{
 					sides.push(RIGHT);
@@ -139,7 +158,7 @@ package
 				{
 					sides.push(UP);
 				}
-
+				/**  random a side,then move two steps.		 */
 				if (sides.length > 0)
 				{
 					var side:int = sides[int(Math.random() * sides.length)];
@@ -178,18 +197,26 @@ package
 					yStack.pop();
 				}
 			}
+			this.removeChild(txt);
 		}
 
 		private function setTile(x:int, y:int, solid:Boolean):void
 		{
-//			setInterval(setIt,Math.random()*1000,solid);
-			setIt(solid);
-			data.setPixel(x, y, solid ? 0x000000 : 0xFFFFFF);
+//			setTimeout(setIt,Math.random()*100,x,y,solid);
+			setIt(x,y,solid);
+			
 		}
 		
-		private function setIt(solid:Boolean):void
+		/**
+		 *  set bitmap a target a new color 
+		 * @param x 
+		 * @param y
+		 * @param solid 
+		 * 
+		 */		
+		private function setIt(x:int,y:int,solid:Boolean):void
 		{
-			
+			data.setPixel(x, y, solid ? 0x000000 : 0xFFFFFF);
 		}
 
 		private function getTile(x:int, y:int):Boolean
