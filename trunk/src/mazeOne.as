@@ -10,9 +10,11 @@ package
 	
 	import flash.display.Bitmap;
 	import flash.display.BitmapData;
+	import flash.display.Loader;
 	import flash.display.Shape;
 	import flash.display.Sprite;
 	import flash.display.StageScaleMode;
+	import flash.events.Event;
 	import flash.events.MouseEvent;
 	import flash.geom.Point;
 	import flash.text.TextField;
@@ -35,7 +37,7 @@ package
 
 		public var closed:BitmapData = new BitmapData(MAZE_WIDTH, MAZE_HEIGHT, false, 0);
 		public var data:BitmapData = new BitmapData(MAZE_WIDTH, MAZE_HEIGHT, false, 0xFFFFFF);
-		public var bitmap:Bitmap = new Bitmap(data);
+		public var bitmap:Bitmap ;
 
 		public var start:Point;
 		public var end:Point;
@@ -45,6 +47,8 @@ package
 		public function mazeOne()
 		{
 			stage.scaleMode = StageScaleMode.NO_SCALE;
+			var loader:Loader=new Loader();
+			loader.loaderInfo.addEventListener(Event.COMPLETE,loadComplete);
 			MonsterDebugger.initialize(this);
 			bitmap.scaleX = bitmap.scaleY = MAZE_SCALE;
 			bitmap.x = bitmap.y = 0;
@@ -68,7 +72,13 @@ package
 			
 			stage.addEventListener(MouseEvent.CLICK, onClick);
 		}
-
+		
+		protected function loadComplete(event:Event):void
+		{
+			// TODO Auto-generated method stub
+			
+		}
+		
 		protected function onClick(event:MouseEvent):void
 		{
 			start = end;
@@ -217,6 +227,7 @@ package
 		private function setIt(x:int,y:int,solid:Boolean):void
 		{
 			data.setPixel(x, y, solid ? 0x000000 : 0xFFFFFF);
+//			data.
 		}
 
 		private function getTile(x:int, y:int):Boolean
