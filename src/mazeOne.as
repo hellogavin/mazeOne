@@ -48,8 +48,9 @@ package
 		{
 			stage.scaleMode = StageScaleMode.NO_SCALE;
 			var loader:Loader=new Loader();
-			loader.loaderInfo.addEventListener(Event.COMPLETE,loadComplete);
+//			loader.loaderInfo.addEventListener(Event.COMPLETE,loadComplete);
 			MonsterDebugger.initialize(this);
+			bitmap=new Bitmap();
 			bitmap.scaleX = bitmap.scaleY = MAZE_SCALE;
 			bitmap.x = bitmap.y = 0;
 			x = bitmap.width - stage.stageWidth * 0.5;
