@@ -12,12 +12,13 @@ package
 	 * @version 1.0.0
 	 * 创建时间：2013-4-25 下午6:31:58
 	 * */
-	[SWF(frameRate = 1, backgroundColor = "#FFFFFF")]
+	[SWF(frameRate = 30, backgroundColor = "#FFFFFF")]
 	public class Maze extends Sprite
 	{
 		private const MAZE_WIDTH:int = 24;
 		private const MAZE_HEIGHT:int = 19;
 		private const WALL_SIZE:int = 16;
+		private const STARTER_SIZE:int = WALL_SIZE * 0.5;
 		private var _mazes:Array = [];
 		private var my_moves:Array = [];
 		private var _maze_draw:Sprite;
@@ -28,7 +29,6 @@ package
 		public function Maze()
 		{
 			stage.scaleMode = StageScaleMode.NO_SCALE;
-
 			init();
 			addEvent();
 		}
@@ -46,21 +46,22 @@ package
 			var path:Sprite = new Sprite();
 			this.addChild(path);
 			path.graphics.beginFill(0xFFFFFF);
-			path.graphics.drawRect(0, 0.5 * WALL_SIZE, 0.5 * WALL_SIZE, 0.5 * WALL_SIZE);
-			path.graphics.drawRect(MAZE_WIDTH * WALL_SIZE, MAZE_HEIGHT * WALL_SIZE - 0.5 * WALL_SIZE, 0.5 * WALL_SIZE, 0.5 * WALL_SIZE);
+			path.graphics.drawRect(0, STARTER_SIZE, STARTER_SIZE, STARTER_SIZE);
+			path.graphics.drawRect(MAZE_WIDTH * WALL_SIZE, MAZE_HEIGHT * WALL_SIZE - STARTER_SIZE, STARTER_SIZE, STARTER_SIZE);
 			path.graphics.endFill();
 		}
 
 		private function addEvent():void
 		{
 			stage.addEventListener(KeyboardEvent.KEY_UP, keyboardEvent);
-			stage.addEventListener(Event.ENTER_FRAME, draw);
+//			stage.addEventListener(Event.ENTER_FRAME, draw);
 		}
 
 		private var i:int = -1;
 		private var startX:int = -0.25 * WALL_SIZE;
 		private var startY:int = -0.25 * WALL_SIZE;
 
+		/** create draw maze animation in per frame*/
 		protected function draw(event:Event):void
 		{
 			var cell_count:int = MAZE_WIDTH * MAZE_HEIGHT;
@@ -76,23 +77,23 @@ package
 				}
 				if (_mazes[i][DirectionConst.SOUTH] == 1)
 				{
-					_maze_draw.graphics.moveTo(startX - 0.5 * WALL_SIZE, startY + 0.5 * WALL_SIZE);
-					_maze_draw.graphics.lineTo(startX + 0.5 * WALL_SIZE, startY + 0.5 * WALL_SIZE);
+					_maze_draw.graphics.moveTo(startX - STARTER_SIZE, startY + STARTER_SIZE);
+					_maze_draw.graphics.lineTo(startX + STARTER_SIZE, startY + STARTER_SIZE);
 				}
 				if (_mazes[i][DirectionConst.NORTH] == 1)
 				{
-					_maze_draw.graphics.moveTo(startX - 0.5 * WALL_SIZE, startY - 0.5 * WALL_SIZE);
-					_maze_draw.graphics.lineTo(startX + 0.5 * WALL_SIZE, startY - 0.5 * WALL_SIZE);
+					_maze_draw.graphics.moveTo(startX - STARTER_SIZE, startY - STARTER_SIZE);
+					_maze_draw.graphics.lineTo(startX + STARTER_SIZE, startY - STARTER_SIZE);
 				}
 				if (_mazes[i][DirectionConst.EAST] == 1)
 				{
-					_maze_draw.graphics.moveTo(startX + WALL_SIZE * 0.5, startY - 0.5 * WALL_SIZE);
-					_maze_draw.graphics.lineTo(startX + WALL_SIZE * 0.5, startY + 0.5 * WALL_SIZE);
+					_maze_draw.graphics.moveTo(startX + STARTER_SIZE, startY - STARTER_SIZE);
+					_maze_draw.graphics.lineTo(startX + STARTER_SIZE, startY + STARTER_SIZE);
 				}
 				if (_mazes[i][DirectionConst.WEST] == 1)
 				{
-					_maze_draw.graphics.moveTo(startX - 0.5 * WALL_SIZE, startY - 0.5 * WALL_SIZE);
-					_maze_draw.graphics.lineTo(startX - 0.5 * WALL_SIZE, startY + 0.5 * WALL_SIZE);
+					_maze_draw.graphics.moveTo(startX - STARTER_SIZE, startY - STARTER_SIZE);
+					_maze_draw.graphics.lineTo(startX - STARTER_SIZE, startY + STARTER_SIZE);
 				}
 			}
 			else
@@ -118,8 +119,6 @@ package
 					starter.x += WALL_SIZE;
 					break;
 			}
-			/*if (starter.x == MAZE_WIDTH * WALL_SIZE && starter.y == MAZE_HEIGHT * WALL_SIZE - 0.5 * WALL_SIZE)
-				init();*/
 		}
 
 		private function moveStart(direction:int):Boolean
@@ -155,14 +154,14 @@ package
 			starter = new Sprite();
 			this.addChild(starter);
 			starter.graphics.beginFill(0xFF0000);
-			starter.graphics.drawRect(WALL_SIZE * 0.5, WALL_SIZE * 0.5, 0.5 * WALL_SIZE, 0.5 * WALL_SIZE);
+			starter.graphics.drawRect(STARTER_SIZE, STARTER_SIZE, STARTER_SIZE, STARTER_SIZE);
 			starter.graphics.endFill();
 		}
 
 		private function initMoves():void
 		{
 			var cell_count:int = MAZE_WIDTH * MAZE_HEIGHT;
-			var pos:int = Math.floor(Math.random() * cell_count);
+			var pos:int =cell_count-1;// Math.floor(Math.random() * cell_count);
 			initPos = pos;
 			var visited:int = 1;
 			for (var i:int = 0; i < cell_count; i++)
@@ -230,39 +229,39 @@ package
 		{
 			_maze_draw = new Sprite();
 			addChild(_maze_draw);
-			_maze_draw.graphics.lineStyle(WALL_SIZE * 0.5, 0, 1, true);
-		/*var startX:int = -0.25*WALL_SIZE;
-		var startY:int = -0.25*WALL_SIZE;
-		var cell_count:int = MAZE_WIDTH * MAZE_HEIGHT;
-		for (var i:int = 0; i < cell_count; i++)
-		{
-			startX += WALL_SIZE;
-			if (i % MAZE_WIDTH == 0)
+			_maze_draw.graphics.lineStyle(STARTER_SIZE, 0, 1, true);
+			var startX:int = -0.25 * WALL_SIZE;
+			var startY:int = -0.25 * WALL_SIZE;
+			var cell_count:int = MAZE_WIDTH * MAZE_HEIGHT;
+			for (var i:int = 0; i < cell_count; i++)
 			{
-				startY += WALL_SIZE;
-				startX = WALL_SIZE-0.25*WALL_SIZE;
+				startX += WALL_SIZE;
+				if (i % MAZE_WIDTH == 0)
+				{
+					startY += WALL_SIZE;
+					startX = WALL_SIZE - 0.25 * WALL_SIZE;
+				}
+				if (_mazes[i][DirectionConst.SOUTH] == 1)
+				{
+					_maze_draw.graphics.moveTo(startX - STARTER_SIZE, startY + STARTER_SIZE);
+					_maze_draw.graphics.lineTo(startX + STARTER_SIZE, startY + STARTER_SIZE);
+				}
+				if (_mazes[i][DirectionConst.NORTH] == 1)
+				{
+					_maze_draw.graphics.moveTo(startX - STARTER_SIZE, startY - STARTER_SIZE);
+					_maze_draw.graphics.lineTo(startX + STARTER_SIZE, startY - STARTER_SIZE);
+				}
+				if (_mazes[i][DirectionConst.EAST] == 1)
+				{
+					_maze_draw.graphics.moveTo(startX + STARTER_SIZE, startY - STARTER_SIZE);
+					_maze_draw.graphics.lineTo(startX + STARTER_SIZE, startY + STARTER_SIZE);
+				}
+				if (_mazes[i][DirectionConst.WEST] == 1)
+				{
+					_maze_draw.graphics.moveTo(startX - STARTER_SIZE, startY - STARTER_SIZE);
+					_maze_draw.graphics.lineTo(startX - STARTER_SIZE, startY + STARTER_SIZE);
+				}
 			}
-			if (_mazes[i][DirectionConst.SOUTH] == 1)
-			{
-				_maze_draw.graphics.moveTo(startX - 0.5 * WALL_SIZE, startY + 0.5 * WALL_SIZE);
-				_maze_draw.graphics.lineTo(startX + 0.5 * WALL_SIZE, startY + 0.5 * WALL_SIZE);
-			}
-			if (_mazes[i][DirectionConst.NORTH] == 1)
-			{
-				_maze_draw.graphics.moveTo(startX - 0.5 * WALL_SIZE, startY - 0.5 * WALL_SIZE);
-				_maze_draw.graphics.lineTo(startX + 0.5 * WALL_SIZE, startY - 0.5 * WALL_SIZE);
-			}
-			if (_mazes[i][DirectionConst.EAST] == 1)
-			{
-				_maze_draw.graphics.moveTo(startX + WALL_SIZE * 0.5, startY - 0.5 * WALL_SIZE);
-				_maze_draw.graphics.lineTo(startX + WALL_SIZE * 0.5, startY + 0.5 * WALL_SIZE);
-			}
-			if (_mazes[i][DirectionConst.WEST] == 1)
-			{
-				_maze_draw.graphics.moveTo(startX - 0.5 * WALL_SIZE, startY - 0.5 * WALL_SIZE);
-				_maze_draw.graphics.lineTo(startX - 0.5 * WALL_SIZE, startY + 0.5 * WALL_SIZE);
-			}
-		}*/
 		}
 	}
 }
