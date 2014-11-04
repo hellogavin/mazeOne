@@ -6,22 +6,17 @@ package
 	 * @version 1.0.0
 	 * 创建时间：2013-4-25 上午10:55:33
 	 * */
-	import com.demonsters.debugger.MonsterDebugger;
 	
 	import flash.display.Bitmap;
 	import flash.display.BitmapData;
-	import flash.display.Loader;
 	import flash.display.Shape;
 	import flash.display.Sprite;
 	import flash.display.StageScaleMode;
-	import flash.events.Event;
 	import flash.events.MouseEvent;
 	import flash.geom.Point;
-	import flash.text.TextField;
-	import flash.text.TextFormat;
-	import flash.utils.setInterval;
 	import flash.utils.setTimeout;
 
+	[SWF(backgroundColor='#CCCCCC')]
 	public class mazeOne extends Sprite
 	{
 		public static const MAZE_WIDTH:int = 61;
@@ -37,49 +32,30 @@ package
 
 		public var closed:BitmapData = new BitmapData(MAZE_WIDTH, MAZE_HEIGHT, false, 0);
 		public var data:BitmapData = new BitmapData(MAZE_WIDTH, MAZE_HEIGHT, false, 0xFFFFFF);
-		public var bitmap:Bitmap ;
+		public var bitmap:Bitmap;
 
 		public var start:Point;
 		public var end:Point;
 		public var pathShape:Shape = new Shape();
-		private var txt:TextField=new TextField();
 
 		public function mazeOne()
 		{
 			stage.scaleMode = StageScaleMode.NO_SCALE;
-			var loader:Loader=new Loader();
-//			loader.loaderInfo.addEventListener(Event.COMPLETE,loadComplete);
-			MonsterDebugger.initialize(this);
-			bitmap=new Bitmap();
+			bitmap = new Bitmap();
 			bitmap.scaleX = bitmap.scaleY = MAZE_SCALE;
 			bitmap.x = bitmap.y = 0;
-			x = bitmap.width - stage.stageWidth * 0.5;
-			y = (bitmap.height - stage.stageHeight) * 0.5;
+//			x = bitmap.width - stage.stageWidth * 0.5;
+//			y = (bitmap.height - stage.stageHeight) * 0.5;
 			addChild(bitmap);
+			bitmap.bitmapData=data;
 
 			pathShape.scaleX = pathShape.scaleY = MAZE_SCALE;
 			pathShape.x = pathShape.y = MAZE_SCALE * 0.5;
 			addChild(pathShape);
-//			setInterval(test,100,1,2);
-			
-			var format:TextFormat=new TextFormat();
-			format.size=20;
-			txt.defaultTextFormat=format;
-			txt.text="绘制中……";
-			
-			this.addChild(txt);
-			setTimeout(generateMaze,2000);
-//			setInterval(generateMaze,2000);
-			
+			setTimeout(generateMaze, 2000);
 			stage.addEventListener(MouseEvent.CLICK, onClick);
 		}
-		
-		protected function loadComplete(event:Event):void
-		{
-			// TODO Auto-generated method stub
-			
-		}
-		
+
 		protected function onClick(event:MouseEvent):void
 		{
 			start = end;
@@ -132,8 +108,6 @@ package
 		private var xStack:Array = [];
 		private var yStack:Array = [];
 
-		
-		
 		private function generateMaze():void
 		{
 
@@ -147,11 +121,10 @@ package
 
 			while (xStack.length > 0)
 			{
-				trace("random :  " + Math.random());
 				x = xStack[xStack.length - 1];
 				y = yStack[yStack.length - 1];
 				sides.length = 0;
-				
+
 				/**  judge can through side.	Use 2 steps is necessary.	 Because just one step may be can't move next. */
 				if (getTile(x + 2, y))
 				{
@@ -200,7 +173,6 @@ package
 							yStack.push(y - 2);
 							break;
 					}
-//					drawing(side,x,y);private
 				}
 				else
 				{
@@ -208,27 +180,23 @@ package
 					yStack.pop();
 				}
 			}
-			this.removeChild(txt);
 		}
 
 		private function setTile(x:int, y:int, solid:Boolean):void
 		{
-//			setTimeout(setIt,Math.random()*100,x,y,solid);
-			setIt(x,y,solid);
-			
+			setIt(x, y, solid);
 		}
-		
+
 		/**
-		 *  set bitmap a target a new color 
-		 * @param x 
+		 *  set bitmap a target a new color
+		 * @param x
 		 * @param y
-		 * @param solid 
-		 * 
-		 */		
-		private function setIt(x:int,y:int,solid:Boolean):void
+		 * @param solid
+		 *
+		 */
+		private function setIt(x:int, y:int, solid:Boolean):void
 		{
 			data.setPixel(x, y, solid ? 0x000000 : 0xFFFFFF);
-//			data.
 		}
 
 		private function getTile(x:int, y:int):Boolean
