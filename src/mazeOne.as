@@ -81,7 +81,9 @@ package
 
 		private function pathFind(start:Point, end:Point):Array
 		{
-			if (!getTile(start.x, start.y) && !getTile(end.x, end.y))
+			var bool1:Boolean=getTile(start.x, start.y);
+			var bool2:Boolean=getTile(end.x, end.y);
+			if (!bool1 && !bool2)
 			{
 				closed.fillRect(closed.rect, 0xFF000000 | OPEN);
 				setClosed(start.x, start.y, ILLEGAL);
@@ -92,12 +94,66 @@ package
 				var yQueue:Array = [];
 				xQueue.push(start.x);
 				yQueue.push(start.y);
-				/*while(xQueue.length>0)
-				{
-					x=
-				}*/
+				while (xQueue.length > 0) {
+					x=xQueue.shift();
+					y=yQueue.shift();
+
+					if (x == end.x && y == end.y) {
+						var path:Array=[];
+						var tile:int=getClosed(x,y);
+						while (tile != ILLEGAL) {
+							path.push(new Point(x, y));
+							switch (tile) {
+								case RIGHT :
+									x++;
+									break;
+								case LEFT :
+									x--;
+									break;
+								case DOWN :
+									y++;
+									break;
+								case UP :
+									y--;
+									break;
+							}
+							tile=getClosed(x,y);
+						}
+						path.push(new Point(x, y));
+						return path.reverse();
+					}
+					else {
+						if (getClosed(x + 1, y) == OPEN && !getTile(x + 1, y)) {
+							setClosed(x + 1, y, LEFT);
+							xQueue.push(x + 1);
+							yQueue.push(y);
+						}
+						if (getClosed(x - 1, y) == OPEN && !getTile(x - 1, y)) {
+							setClosed(x - 1, y, RIGHT);
+							xQueue.push(x - 1);
+							yQueue.push(y);
+						}
+						if (getClosed(x, y + 1) == OPEN && !getTile(x, y + 1)) {
+							setClosed(x, y + 1, UP);
+							xQueue.push(x);
+							yQueue.push(y + 1);
+						}
+						if (getClosed(x, y - 1) == OPEN && !getTile(x, y - 1)) {
+							setClosed(x, y - 1, DOWN);
+							xQueue.push(x);
+							yQueue.push(y - 1);
+						}
+					}
+				}
 			}
 			return null;
+		}
+
+		public function getClosed(x:int, y:int):int {
+			if (x < 0 || y < 0 || x >= MAZE_WIDTH || y >= MAZE_HEIGHT) {
+				return ILLEGAL;
+			}
+			return closed.getPixel(x, y);
 		}
 
 		private function setClosed(x:Number, y:Number, value:int):void
@@ -203,7 +259,7 @@ package
 		{
 			if (x < 0 || y < 0 || x >= MAZE_WIDTH || y >= MAZE_HEIGHT)
 				return false;
-			return data.getPixel(x, y) < 0xFFFFFF;
+			return data.getPixel(x, y) >0;
 		}
 	}
 }
